@@ -1,0 +1,573 @@
+:postgres:
+==========
+Ref: https://www.postgresql.org/docs/current/intro-whatis.html
+
+
+1. Download and install postgres: postgres/postgres//5432
+2. Connect:
+		2a. GUI Client
+		2b. Terminal/CMD
+		2c. Application
+ DatGrip is best GUI Client to connect Database.(30 days free trail then we need to buy)
+ pgAdmin is openSource GUI client.
+3. Download and install pgAdmin for windows.(not required)
+   Create desktop shortcuts for C:\Program Files\PostgreSQL\13\scripts\runsql.bat
+								C:\Program Files\PostgreSQL\13\pgAdmin 4\bin\pgAdmin4.exe
+
+4.   Connect runsql console as follow
+	Server [localhost]:
+	Database [postgres]:
+	Port [5432]:
+	Username [postgres]:
+	Password for user postgres:
+	psql (13.2)
+
+5. 
+	CREATE DATABASE rk;
+	\l
+	\c rk
+	\l 
+	\c grk
+	\l
+	DROP DATABASE grk;		---> It will fail as we connect grk database.
+	\c rk
+	DROP DATABASE grk;
+	
+6.  
+	CREATE TABLE person (
+	id INT,
+	first_name VARCHAR(50),
+	last_name VARCHAR(50),
+	gender VARCHAR(7),
+	data_of_birth DATE );
+	
+	\d person
+7.
+	DROP TABLE person;
+
+8.
+	CREATE TABLE person (
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	gender VARCHAR(7) NOT NULL,
+	data_of_birth DATE NOT NULL,
+	email VARCHAR(100)
+	);
+
+	\d person
+	\d
+	\dt
+
+	CREATE TABLE weather (
+	    city            varchar(80),
+	    temp_lo         int,           -- low temperature
+	    temp_hi         int,           -- high temperature
+	    prcp            real,          -- precipitation
+	    date            date
+	);
+
+	CREATE TABLE cities (
+	    name            varchar(80),
+	    location        point
+	);
+
+	\dt
+	\d weather 
+	\d cities 
+9. 
+	INSERT INTO person (first_name, last_name, gender, data_of_birth) VALUES ( 'Ravi', 'G', 'MALE', DATE '1990-02-01');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Kiran', 'G', 'MALE', DATE '1990-02-01', 'kirang@gmail.com');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Ram', 'G', 'MALE', '1990-02-02', 'ramg@gmail.com');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth) VALUES ( 'Devi', 'G', 'FEMALE', DATE '1993-02-01');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Ravali', 'G', 'FEMALE', DATE '1996-02-01', 'ravli@gmail.com');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Anita', 'G', 'FEMALE', '1992-02-02', 'anita@gmail.com');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth) VALUES ( 'Ravi', 'G', 'MALE', DATE '1990-02-01');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Raj', 'R', 'MALE', DATE '1990-02-01', 'raj@gmail.com');
+	INSERT INTO person (first_name, last_name, gender, data_of_birth, email) VALUES ( 'Tej', 'G', 'MALE', '1994-02-02', 'tej@gmail.com');
+
+	
+10.
+	Go to https://mockaroo.com/
+	Generate data as per your table. Copy the file into postgres accsable location ex: C:\Users\Public\PERSON_MOCK_DATA.sql
+	Download VSCode for sql editor. (to view)
+	
+	DROP TABLE person;
+	\i 'C:\\Users\\LENOVO\\Desktop\\postgres\\PERSON_MOCK_DATA.sql'
+	\d person;
+	
+	\i 'C:\\Users\\LENOVO\\Desktop\\postgres\\student.sql'
+	\d student;
+
+11.	
+	SELET FROM person;             valid no records but no of displayed.
+	
+	SELET first_name FROM person;
+	SELET first_name,email FROM person;
+	SELET * FROM person;
+	SELECT first_name AS FNAME, email AS MAIL FROM person;
+	
+12. order by ASC/DESC
+
+	SELECT * FROM person ORDER BY email;
+	SELECT * FROM person ORDER BY data_of_birth ASC;
+	SELECT * FROM person ORDER BY data_of_birth,email DESC;
+	
+	SELECT id, name, (s1+s2+s3)/3 AS avg_marks FROM student;
+	SELECT id, name, (s1+s2+s3)/3 AS avg_marks FROM student ORDER BY avg_marks;
+	SELECT id, name, (s1+s2+s3)/3 AS avg_marks FROM student ORDER BY avg_marks DESC;
+	
+13. 
+	SELECT DISTINCT name from student;
+	
+	SELECT * FROM person WHERE gender='MALE';
+	SELECT * FROM person WHERE first_name='Ravi' AND gender='MALE';
+	SELECT * FROM person WHERE (first_name='Ravi' OR data_of_birth='1990-02-01') AND gender='MALE';
+	SELECT * FROM person WHERE (first_name='Ravi' OR data_of_birth='1990-02-01') AND gender='MALE' ORDER BY first_name;
+
+14. LIMT, OFFSET & FETCH
+
+First 10 records:
+	SELECT * FROM student LIMIT 10;
+
+3 records from 6 i.e 6,7,8 records
+	SELECT * FROM student OFFSET 5 LIMIT 3;	
+	SELECT * FROM student OFFSET 5 FETCH FIRST 5 ROW ONLY;
+	SELECT * FROM student OFFSET 5 FETCH FIRST ROW ONLY;
+	SELECT * FROM student OFFSET 5 FETCH FIRST 1 ROW ONLY;
+
+15. IN
+	SELECT * FROM person WHERE gender IN ('MALE', 'FEMALE');
+
+16. BETWEEN both are inclusive.
+	SELECT * FROM person WHERE data_of_birth BETWEEN '1992-01-01' and '1994-02-02';
+
+17. LIKE & ILIKE
+	SELECT * FROM person WHERE email LIKE '%gmail.com';	
+	SELECT * FROM person WHERE email LIKE '%gmail.%';
+	SELECT * FROM person WHERE email LIKE 'angle%@gmail.___';
+
+	SELECT * FROM person WHERE email ILIKE 'angle%@gmail.___';
+
+18. GROUP BY, HAVING count(*), sum(_), avg(-), max(_), min(-)...
+	
+	SELECT  gender, count(*) FROM person GROUP BY gender;
+	SELECT  gender, count(*) FROM person GROUP BY gender ORDER BY gender;
+	
+	SELECT  gender, count(*) AS count FROM person GROUP BY gender ORDER BY count DESC;
+	SELECT  gender, count(*) AS count FROM person GROUP BY gender ORDER BY count;
+
+	SELECT  gender, count(*) AS count FROM person GROUP BY gender HAVING count(*) > 2  ORDER BY count;
+	SELECT count(*), sum(id) as sum, avg(id) FROM person GROUP BY gender HAVING count(*) >= 3 ORDER BY sum DESC;
+	select dep_code from emp group by dep_code having dep_code in('DEP001','DEP002') order by dep_code;
+	
+14. joins
+
+	SELECT * FROM wether;
+	SELECT * from cities;
+	SELECT * FROM weather, cities where name=city;
+	select * from emp,dep where emp.dep_code=dep.dep_code;
+	
+	SELECT * FROM weather w, cities c WHERE w.city = c.name;
+	SELECT city, temp_lo, temp_hi, prcp, date, location FROM cities, weather WHERE city=name;	
+	SELECT weather.city, weather.temp_lo, weather.temp_hi, weather.prcp, weather.date, cities.location from weather,cities WHERE weather.city=cities.name;
+	
+	
+	select * from emp,dep where emp.dep_code=dep.dep_code;
+	SELECT * FROM weather JOIN cities ON (weather.city=cities.name);
+	SELECT * FROM weather INNER JOIN cities ON (weather.city=cities.name);
+	
+	SELECT * FROM cities LEFT OUTER JOIN weather ON (cities.name=weather.city);
+	
+	SELECT * from weather RIGHT OUTER JOIN cities ON (weather.city=cities.name);
+	
+	SELECT * from weather FULL OUTER JOIN cities ON (weather.city=cities.name);
+	
+15. self join:
+	
+	SELECT w1.city, w1.temp_lo AS low, w1.temp_hi AS high, w2.city, w2.temp_lo AS low, w2.temp_hi as high from weather w1, weather w2;	
+	
+	SELECT w1.city, w1.temp_lo AS low, w1.temp_hi AS high, w2.city, w2.temp_lo AS low, w2.temp_hi as high from weather w1, weather w2 where w1.temp_lo < w2.temp_lo AND w1.temp_hi > w2.temp_hi;
+	
+16. Aggregate functions: min(_), max(-), count(-), count(*), avg(-) ,round(avg(-)) ..... etc
+
+
+	SELECT max(temp_hi) FROM weather;
+	SELECT * FROM weather WHERE temp_hi=(SELECT max(temp_hi) FROM weather);
+	
+	SELECT data_of_birth, count(data_of_birth) FROM person GROUP BY data_of_birth;
+	SELECT data_of_birth, count(data_of_birth) FROM person GROUP BY data_of_birth HAVING count(data_of_birth) >2;
+	
+	SELECT data_of_birth, count(data_of_birth) FROM person WHERE data_of_birth BETWEEN '1990-02-01' AND '1995-01-02' GROUP BY data_of_birth;
+	
+	select * from memp m1, memp m2 where m1.eid=m2.mgr;
+	select m1.eid,m2.mgr, count(*) from memp m1, memp m2 group by m1.eid,m2.mgr having m1.eid=m2.mgr;
+	select m1.eid, count(*) from memp m1, memp m2 group by m1.eid,m2.mgr having m1.eid=m2.mgr;
+	
+	\i 'C:\\Users\\LENOVO\\Desktop\\postgres\\car.sql'
+	\d car
+	
+	SELECT make, model, MIN(price) FROM car GROUP BY make, model;
+	
+17. Arithmetic operations;
+	SELECT 10 + 3;
+	SELECT 10 - 3;
+	SELECT 10 * 3;
+	SELECT 10 / 3;
+	SELECT 10 % 3;
+	SELECT 10 ^ 3;
+	SELECT 10 = 3;
+	SELECT 10 < 3;
+	SELECT 10 > 3;
+	SELECT 10 <> 3;
+	SELECT 5!;
+
+18. SELECT id, make, model, price, ROUND(price * 10/100) AS ten_percent, ROUND(price - (price * .10)) AS "affected price" from car;
+
+19. COALESCE
+	
+	SELECT COALESCE(1);
+	SELECT COALESCE(null,5);
+	SELECT COALESCE(null,null,5);
+	SELECT COALESCE(null,null, null,20,5);
+	
+	SELECT id, first_name, last_name, gender, data_of_birth, COALESCE(email,'N/A') FROM person;
+
+20. Divison By Zero
+	
+	SELECT 10 / 0;
+	SELECT NULLIF(10,10);
+	SELECT 10 / NULL;
+	
+	SELECT COALESCE(10 / NULLIF(0,0), 0);
+
+21. Date 
+	SELECT NOW();
+	SELECT NOW()::DATE;
+	SELECT NOW()::TIME;
+	
+	SELECT NOW() - INTERVAL '1 YEAR';
+	SELECT NOW() - INTERVAL '2 YEARS';
+	SELECT NOW() - INTERVAL '1 MONTH';
+	SELECT NOW() - INTERVAL '3 MONTHS';
+	SELECT NOW() - INTERVAL '1 DAY';
+	SELECT NOW() - INTERVAL '10 DAYS';
+	SELECT (NOW() - INTERVAL '10 DAYS')::DATE ;
+	
+	SELECT EXTRACT(YEAR from NOW());
+	SELECT EXTRACT(MONTH from NOW());
+	SELECT EXTRACT(DAY from NOW());
+	SELECT EXTRACT(DOW from NOW());
+	SELECT EXTRACT(CENTURY from NOW());
+	
+	SELECT id, first_name, gender, data_of_birth, COALESCE(email,'***N/A***'), AGE(NOW(),data_of_birth) as age FROM person;
+	SELECT id, first_name, gender, data_of_birth, COALESCE(email,'***N/A***'), EXTRACT(YEAR from AGE(NOW(),data_of_birth)) as age FROM person;
+
+22.  UPPDTE and DELETE
+	
+	UPDATE weather SET temp_lo=temp_lo-2, temp_hi=temp_hi+2 WHERE date='1994-11-29';
+	
+	DELETE FROM weather WHERE date='1998-02-01';
+
+23.
+ 	ALTER TABLE person DROP CONSTRAINT "person_pkey";
+	ALTER TABLE person ADD PRIMARY KEY (id);
+	
+	ALTER TABLE person ADD CONSTRAINT unique_email UNIQUE(email);
+	ALTER TABLE person ADD UNIQUE(email);
+	
+	ALTER TABLE peron ADD CONSTRAINT gender_check_constraint CHECK(gender ='FEMALE' OR gender='MALE');
+
+	INSERT INTO person (id, first_name, last_name, gender, data_of_birth, email) VALUES (1, 'Ravikiran', 'G', 'MALE', '1987-02-01', 'rk@gmail.com');	
+	INSERT INTO person (id, first_name, last_name, gender, data_of_birth, email) VALUES (1, 'Ravikiran', 'G', 'MALE', '1987-02-01', 'rk@gmail.com') ON CONFLICT (id) DO NOTHING;	
+
+	INSERT INTO person (id, first_name, last_name, gender, data_of_birth, email) VALUES (1, 'Ravikiran', 'G', 'MALE', '1987-02-01', 'rk@gmail.com') ON CONFLICT (id) DO UPDATE SET email=EXCLUDED.email;	
+
+	SELECT DISTINCT gender FROM person;
+
+24. view 
+	
+	CREATE VIEW person_male_view AS SELECT id, first_name, gender, data_of_birth, email from person where gender='MALE';
+	DROP VIEW person_male_view;
+			
+25. Foreign key
+	DROP TABLE person;
+	DROP TABLE car;
+	\i 'C:\\Users\\LENOVO\\Desktop\\postgres\\person_car.sql'
+	\d person
+	\d car
+	
+
+26.  JOIN and INNER JOIN are same.
+	\x
+	SELECT * FROM person JOIN car ON person.card_id=car.id;
+	SELECT * FROM person INNER JOIN car ON person.card_id=car.id;
+	\x
+	
+	SELECT person.first_name, car.make, car.model, car.price from person JOIN car ON person.card_id=car.id;
+	SELECT person.first_name, car.make, car.model, car.price from person INNER JOIN car ON person.card_id=car.id; 
+	
+	SELECT person.first_name, car.make, car.model, car.price from person LEFT JOIN car ON person.card_id=car.id;
+	
+	SELECT person.first_name, car.make, car.model, car.price from person RIGHT JOIN car ON person.card_id=car.id;
+	
+	
+	
+27. 
+	DELETE FROM car WHERE id=3;
+	ERROR:  update or delete on table "car" violates foreign key constraint "person_card_id_fkey" on table "person"
+	DETAIL:  Key (id)=(3) is still referenced from table "person".
+
+		
+	DELETE FROM person WHERE id=5;
+	DELETE FROM car WHERE id=3;
+
+28. Export query result into csv file.
+	
+	\copy (SELECT person.first_name, car.make, car.model, car.price FROM person INNER JOIN car ON person.card_id=car.id) TO 'C:\\Users\\LENOVO\\Desktop\\postgres\\result1.csv' DELIMITER ',' CSV HEADER;
+	
+29. bigserial---?bigint + autoincrement
+	\d person
+	\d car
+	SELECT * FROM person_id_seq;
+	SELECT * FROM car_id_seq;
+	
+	SELECT nextval('car_id_seq'::regclass);
+	SELECT nextval('car_id_seq'::regclass);
+	SELECT nextval('car_id_seq'::regclass);
+	
+	ALTER SEQUENCE car_id_seq RESTART WITH 3;
+
+30. Extensions 
+	SELECT * FROM pg_available_extensions;
+
+31. UUID
+	Check if uuid-ossp is installed or not:
+		SELECT * FROM pg_available_extensions;
+
+	Install uuid-ossp extension if not instlled.
+		CREATE EXTENSION IF NOT EXISTS "uuid-ossp";	
+	\df
+	SELECT uuid_generate_v4();
+
+32. Tble with uuid as primary key.
+	
+	DROP TABLE person;
+	DROP TABLE car;
+	
+	Updated table definication as follow.
+	
+	CREATE TABLE car(
+	car_uuid UUID NOT NULL PRIMARY KEY,
+	make VARCHAR(50) NOT NULL,
+	model VARCHAR(50) NOT NULL,
+	price NUMERIC(19,2) NOT NULL
+	);
+
+	CREATE TABLE person(
+	person_uuid UUID NOT NULL PRIMARY KEY,
+	first_name VARCHAR(50) NOT NULL,
+	last_name VARCHAR(5) NOT NULL,
+	gender VARCHAR(7) NOT NULL,
+	email VARCHAR(100),
+	date_of_birth DATE NOT NULL,
+	country_of_birth VARCHAR(50) NOT NULL,
+	car_uuid UUID REFERENCES car(car_uuid),
+	UNIQUE(car_uuid)
+	);
+	
+	insert into car(car_uuid,make,model,price) values (uuid_generate_v4(),'Land Rover', 'Sterling', '87345.34');
+	insert into car(car_uuid,make,model,price) values (uuid_generate_v4(),'GMC', 'Acadia', '17345.34');
+	insert into car(car_uuid,make,model,price) values (uuid_generate_v4(),'GTA', 'Acadia', '19345.34');
+	
+	
+	insert into person(person_uuid,first_name, last_name, gender, email, date_of_birth, country_of_birth) values (uuid_generate_v4(),'Ravi', 'G', 'MALE', 'ravi@gmail.com', DATE '1987-02-01', 'india');
+	insert into person(person_uuid,first_name, last_name, gender, email, date_of_birth, country_of_birth) values (uuid_generate_v4(),'Devi', 'G', 'FEMALE', 'devi@gmail.com', DATE '1989-02-01', 'india');
+	insert into person(person_uuid,first_name, last_name, gender, email, date_of_birth, country_of_birth) values (uuid_generate_v4(),'Raj', 'G', 'MALE', 'raj@gmail.com', DATE '1987-02-01', 'india');
+	insert into person(person_uuid,first_name, last_name, gender, email, date_of_birth, country_of_birth) values (uuid_generate_v4(),'Chinna', 'G', 'MALE', 'chinna@gmail.com', DATE '1987-02-01', 'india');
+	
+
+	UPDATE person SET car_uuid='b1904259-4f60-4f07-a483-1322f6ea54ac' WHERE person_uuid='09b8133c-2166-4e88-ac98-71361a119382';
+	UPDATE person SET car_uuid='3106ef14-21e9-4a92-aebf-bf2caf28000e' WHERE person_uuid='ecaa9e4d-307d-4e48-8ca2-488a3bb15817';
+	UPDATE person SET car_uuid='08cdb7ef-3355-4acf-825c-b64c8c90fbdf' WHERE person_uuid='835c9e4c-842c-4250-86c2-0011c6259814';
+	
+	\x
+	SELECT * FROM person JOIN car ON person.car_uuid=car.car_uuid;
+	SELECT * FROM person JOIN car USING (car_uuid);
+	
+
+Interview Queries:
+==================
+rk=# select * from emp;
+ id |   name    |   gender   |  sal  | dep_code
+----+-----------+------------+-------+----------
+  1 | Umberto   | Agender    | 22227 | DEP001
+  2 | Obie      | Bigender   | 21013 | DEP002
+  3 | Sula      | Agender    | 18438 | DEP003
+  4 | Neill     | Polygender | 20947 | DEP003
+  5 | Isidore   | Polygender | 16271 | DEP004
+  6 | Salaidh   | Polygender | 16176 | DEP005
+  7 | Guy       | Bigender   | 16162 | DEP005
+  8 | Ingelbert | Agender    | 19999 | DEP003
+  9 | Sadye     | Polygender | 17706 | DEP002
+ 10 | Esmeralda | Bigender   | 12355 | DEP001
+(10 rows)
+
+
+rk=# select * from demp;
+ id |  name   |   gender   |  sal
+----+---------+------------+--------
+  1 | Umberto | Agender    |  22227
+  2 | Obie    | Bigender   |  21013
+  3 | Sula    | Agender    |  18438
+  4 | Neill   | Polygender |  20947
+  5 | Isidore | Polygender |  16271
+  6 | Salaidh | Polygender |  16176
+  1 | Umberto | Agender    |  22227
+  2 | Obie    | Bigender   |  21013
+  1 | Umberto | Agender    |  22227
+  2 | Obie    | Bigender   |  21013
+  2 | Obie    | Bigender   | 299993
+(11 rows)
+
+
+
+	
+1) Create an empty table from existed table;
+	SELECT * INTO test_car1 FROM car WHERE 1=2;
+2) Create a table from existing table;   
+	SELECT * INTO test_car2 FROM car WHERE 1=1;
+3) Fetch unique records from table.
+	SELECT DISTINCT * FROM demp;
+	SELECT * FROM demp GROUP BY id,name,gender,sal;
+ id |  name   |   gender   |  sal
+----+---------+------------+--------
+  5 | Isidore | Polygender |  16271
+  4 | Neill   | Polygender |  20947
+  3 | Sula    | Agender    |  18438
+  2 | Obie    | Bigender   |  21013
+  2 | Obie    | Bigender   | 299993
+  6 | Salaidh | Polygender |  16176
+  1 | Umberto | Agender    |  22227
+(7 rows)
+
+
+4) Fetch only unique excluding duplicate recored from table.
+
+	SELECT id, name, gender,sal FROM demp GROUP BY id,name,gender,sal having count(*)=1;
+
+ id |  name   |   gender   |  sal
+----+---------+------------+--------
+  5 | Isidore | Polygender |  16271
+  4 | Neill   | Polygender |  20947
+  3 | Sula    | Agender    |  18438
+  2 | Obie    | Bigender   | 299993
+  6 | Salaidh | Polygender |  16176
+(5 rows)
+
+	
+3) Find the duplicate records from table;
+	 SELECT id, name, gender,sal FROM demp GROUP BY id,name,gender,sal HAVING COUNT(*) >1;
+ id |  name   |  gender  |  sal
+----+---------+----------+-------
+  2 | Obie    | Bigender | 21013
+  1 | Umberto | Agender  | 22227
+(2 rows)
+
+Ex: SELECT id FROM demp GROUP BY id,name,gender,sal HAVING COUNT(*) >1;
+    SELECT id, name, gender, sal, COUNT(*) FROM demp GROUP BY id,name,gender,sal HAVING COUNT(*) >1;
+	SELECT id, name, gender, sal, count(*) FROM demp GROUP BY id, name, gender, sal HAVING COUNT(*) >1 and id <5;
+
+
+*** ctid is a system column on the PostgreSQL database. same as rowid in someother database.
+   select ctid,* from demp;
+   select min(ctid) from demp group by id,name,gender,sal;
+   select min(ctid) from demp group by id,name,gender,sal having count(*) >1;
+   select * from demp where ctid in (select min(ctid) from demp group by id,name,gender,sal);
+   select * from demp where ctid not in (select min(ctid) from demp group by id,name,gender,sal);
+   
+   
+4) Remove duplicate records from table.
+
+Way-1)
+	step-1) Create new table(temp) with distinct records;
+		> SELECT DISTINCT * INTO temp FROM demp;
+	step-2) Delete all records from old table.
+		> DELETE FROM demp;
+	step-3) Insert all records from new table to old table.
+		> INSERT INTO demp SELECT * FROM temp;
+	step-4) Drop the new table.
+		> DROP TABLE temp;
+Way-2)		
+	
+	Step-1) Alter table by adding auto_id BIGSERIAL in postgres.
+		> ALTER TABLE demp ADD auto_id BIGSERIAL;
+	Step-2) Inner queries to delete duplicate record by using auto_id.
+	> DELETE FROM demp WHERE auto_id NOT IN (SELECT MIN(auto_id) FROM demp GROUP BY id,name,gender,sal);
+
+Way-3) ctid in postgres same like ROWID in oracle
+	DELETE FROM demp WHERE ctid NOT IN (SELECT MIN(ctid) FROM demp GROUP BY id,name,gender,sal);
+	
+	
+5) Find the hightest sal, top 5 employee based on sal? (limit, offset - fetch first n row only)
+	
+	Top 1
+	> SELECT * FROM emp ORDER BY sal DESC LIMIT 1;
+	> SELECT * FROM emp ORDER BY sal DESC OFFSET 0 FETCH FIRST 1 ROW ONLY;
+	Top 5
+	> SELECT * FROM emp ORDER BY sal DESC LIMIT 5;
+	> SELECT * FROM emp ORDER BY sal DESC OFFSET 0 FETCH FIRST 5 ROW ONLY;
+	
+	3rd TOP or 3rd highest
+	> SELECT * FROM emp ORDER BY sal DESC OFFSET 2 FETCH FIRST 1 ROW ONLY;
+
+
+
+
+
+rk=# select ctid, dep_code,dep_name from ddep;
+ ctid  | dep_code |    dep_name
+-------+----------+-----------------
+ (0,1) | DEP002   | Stores
+ (0,2) | DEP003   | Human Resources
+ (0,3) | DEP001   | Training
+ (0,4) | DEP004   | Engineering
+ (0,5) | DEP005   | Support
+(5 rows)
+
+
+rk=# UPDATE ddep SET dep_name='ABC' WHERE dep_code='DEP002';
+UPDATE 1
+rk=# select ctid, dep_code,dep_name from ddep;
+ ctid  | dep_code |    dep_name
+-------+----------+-----------------
+ (0,2) | DEP003   | Human Resources
+ (0,3) | DEP001   | Training
+ (0,4) | DEP004   | Engineering
+ (0,5) | DEP005   | Support
+ (0,6) | DEP002   | ABC
+(5 rows)
+
+
+
+======
+Top and Top-Nth sal employee details
+ select distinct * from demp order by sal desc limit 1;
+ select distinct * from demp order by sal desc offset 4 fetch first 1 row only;
+ 
+Department wise max sal employee details. 
+ select min(id) id,dep_code,max(sal) from emp group by dep_code;
+ select * from emp where (dep_code,sal) in (select dep_code, max(sal) from emp group by dep_code);
+ select distinct * from emp where sal in (select max(sal) from emp group by dep_code);
+ 
+ 	select * from emp,dep where emp.dep_code=dep.dep_code;
+	SELECT * FROM weather JOIN cities ON (weather.city=cities.name);
+	SELECT * FROM weather INNER JOIN cities ON (weather.city=cities.name);
+	
+	SELECT * FROM cities LEFT OUTER JOIN weather ON (cities.name=weather.city);
+	SELECT * from weather RIGHT OUTER JOIN cities ON (weather.city=cities.name);
+	SELECT * from weather FULL OUTER JOIN cities ON (weather.city=cities.name);
+
+select * from memp m1, memp m2 where m1.eid=m2.mgr;
+select m1.eid,m2.mgr, count(*) from memp m1, memp m2 group by m1.eid,m2.mgr having m1.eid=m2.mgr;
+select m1.eid, count(*) from memp m1, memp m2 group by m1.eid,m2.mgr having m1.eid=m2.mgr;
